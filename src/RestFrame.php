@@ -11,24 +11,25 @@ abstract class RestFrame {
 	private function __construct(IOFactory $ioFactory) {
 		$this->ioFactory = $ioFactory;
 		$this->setHeaders();
-		if ( self::$compress == true ) {
-			if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) { 
-				ob_start("ob_gzhandler");
-			} else {
-				self::$compress = false;				
-			}
-		}
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
-			case "POST":		echo $ioFactory->toString( $this->doPost() ); break;
-			case "OPTIONS":		echo $ioFactory->toString( $this->doOptions() ); break;
-			case "PUT":			echo $ioFactory->toString( $this->doPut() ); break;
-			case "DELETE":		echo $ioFactory->toString( $this->doDelete() ); break;				
-			default:			echo $ioFactory->toString( $this->doGet() );
-		}
-		if ( self::$compress == true ) {
-			ob_end_clean();
+			case "POST":		$this->write( $ioFactory->toString( $this->doPost() ) ); break;
+			case "OPTIONS":		$this->write( $ioFactory->toString( $this->doOptions() ) ); break;
+			case "PUT":		$this->write( $ioFactory->toString( $this->doPut() ) ); break;
+			case "DELETE":		$this->write( $ioFactory->toString( $this->doDelete() ) ); break;				
+			default:		$this->write( $ioFactory->toString( $this->doGet() ) );
 		}
 	}
+	
+	private function write($data) {
+		if ( self::$compress == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
+			ob_start("ob_gzhandler");
+			echo $data;
+			ob_flush();
+		} else {
+			echo $data;
+		}
+        }
+
 	
 	private function setHeaders() {
 		$headers = getallheaders();
