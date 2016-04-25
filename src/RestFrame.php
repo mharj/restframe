@@ -6,16 +6,27 @@ abstract class RestFrame {
 	private static $corsOrigins = array();
 	private static $corsMethods = array();
 	private static $corsHeaders = array();
+	private static $compress = false;
 	
 	private function __construct(IOFactory $ioFactory) {
 		$this->ioFactory = $ioFactory;
 		$this->setHeaders();
+		if ( $this->compress == true ) {
+			if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) { 
+				ob_start("ob_gzhandler");
+			} else {
+				$this->compress = false;				
+			}
+		}
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
 			case "POST":		echo $ioFactory->toString( $this->doPost() ); break;
 			case "OPTIONS":		echo $ioFactory->toString( $this->doOptions() ); break;
 			case "PUT":			echo $ioFactory->toString( $this->doPut() ); break;
 			case "DELETE":		echo $ioFactory->toString( $this->doDelete() ); break;				
 			default:			echo $ioFactory->toString( $this->doGet() );
+		}
+		if ( $this->compress == true ) {
+			ob_end_clean();
 		}
 	}
 	
@@ -55,7 +66,9 @@ abstract class RestFrame {
 			}
 		}
 	}	
-	
+	public static function setCompression($status=false) {
+		self::$compress = $status;
+	}
 	public static function setCorsOrigins(array $origins) {
 		self::$corsOrigins = $origins;
 	}
