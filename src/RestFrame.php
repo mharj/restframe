@@ -11,11 +11,11 @@ abstract class RestFrame {
 	private function __construct(IOFactory $ioFactory) {
 		$this->ioFactory = $ioFactory;
 		$this->setHeaders();
-		if ( $this->compress == true ) {
+		if ( self::$compress == true ) {
 			if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) { 
 				ob_start("ob_gzhandler");
 			} else {
-				$this->compress = false;				
+				self::$compress = false;				
 			}
 		}
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
@@ -25,7 +25,7 @@ abstract class RestFrame {
 			case "DELETE":		echo $ioFactory->toString( $this->doDelete() ); break;				
 			default:			echo $ioFactory->toString( $this->doGet() );
 		}
-		if ( $this->compress == true ) {
+		if ( self::$compress == true ) {
 			ob_end_clean();
 		}
 	}
