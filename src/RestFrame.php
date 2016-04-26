@@ -33,6 +33,12 @@ abstract class RestFrame {
 	
 	private function setHeaders() {
 		$headers = getallheaders();
+		// Firefox hack
+		foreach ($headers AS $k => $v ) {
+			if ( strtolower($k) == "origin" && $k != "Origin" ) {
+				$headers['Origin']=$v;
+			}
+		}
 		if ( ! empty(self::$corsOrigins) && isset($headers['Origin']) ){
 			if ( ! in_array($headers['Origin'],self::$corsOrigins) ) { 
 				throw new RestFrameCorsException($this->ioFactory,"CORS error",403); // if origin is not in list, throw 403
