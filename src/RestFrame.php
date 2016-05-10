@@ -11,6 +11,7 @@ abstract class RestFrame {
 	private function __construct(IOFactory $ioFactory) {
 		$this->ioFactory = $ioFactory;
 		$this->setHeaders();
+		header('Content-Type: '.$ioFactory->getContentType());
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
 			case "POST":		$this->write( $ioFactory->toString( $this->doPost() ) ); break;
 			case "OPTIONS":		$this->write( $ioFactory->toString( $this->doOptions() ) ); break;
