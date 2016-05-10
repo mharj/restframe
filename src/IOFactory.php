@@ -12,4 +12,8 @@ abstract class IOFactory {
 	 * object to string conversion
 	 */ 
 	abstract function toString($object);
+	/**
+	 * return IOFactory content type
+	 */
+	abstract function getContentType();
 }
