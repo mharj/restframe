@@ -11,4 +11,7 @@ class JsonIOFactory extends IOFactory {
 		}
 		return json_encode($object);
 	}
+	public function getContentType() {
+		return 'application/json';
+	}
 }
