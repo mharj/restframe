@@ -6,9 +6,6 @@ class JsonIOFactory extends IOFactory {
 		return json_decode($string);
 	}
 	public function toString($object) {
-		if ( is_null($object) ) {
-			return "";
-		}
 		return json_encode($object);
 	}
 	public function getContentType() {
