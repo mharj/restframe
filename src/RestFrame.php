@@ -14,9 +14,13 @@ abstract class RestFrame {
 		header('Content-Type: '.$ioFactory->getContentType());
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
 			case "POST":		$this->write( $ioFactory->toString( $this->doPost() ) ); break;
-			case "OPTIONS":		$this->write( $ioFactory->toString( $this->doOptions() ) ); break;
 			case "PUT":		$this->write( $ioFactory->toString( $this->doPut() ) ); break;
 			case "DELETE":		$this->write( $ioFactory->toString( $this->doDelete() ) ); break;				
+			case "OPTIONS":		$data = $this->doOptions();
+						if ( ! is_null($data) ) { // options should not have data to write
+							$this->write( $ioFactory->toString( $data ) ); 
+						}
+						break;
 			default:		$this->write( $ioFactory->toString( $this->doGet() ) );
 		}
 	}
