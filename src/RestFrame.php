@@ -10,11 +10,11 @@ abstract class RestFrame {
 	private $req;
 	
 	private function __construct(IOFactory $ioFactory) {
-		$this->ioFactory = $ioFactory;
-		$this->setHeaders();
 		$this->req = HttpRequest::getServerHttpRequest();
 		$this->resp = new HttpResponse();
 		$this->resp->setHeader('Content-Type',$ioFactory->getContentType());
+		$this->ioFactory = $ioFactory;
+		$this->setHeaders();
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
 			case "POST":		$this->write( $ioFactory->toString( $this->doPost($this->req,$this->resp) ) ); break;
 			case "PUT":		$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
@@ -30,7 +30,7 @@ abstract class RestFrame {
 	
 	private function write($data) {
 		foreach ( $this->resp->getHeaderNames() AS $name ) {
-			header($name.": ".$this->resp->getHeader($name));
+			header($name.": ".implode(",",$this->resp->getHeader($name)));
 		}
 		if ( self::$compress == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
 			ob_start("ob_gzhandler");
