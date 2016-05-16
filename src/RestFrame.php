@@ -20,9 +20,10 @@ abstract class RestFrame {
 			case "PUT":		$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
 			case "DELETE":		$this->write( $ioFactory->toString( $this->doDelete($this->req,$this->resp) ) ); break;				
 			case "OPTIONS":		$data = $this->doOptions($this->req,$this->resp);
-						$this->buildHeaders();
 						if ( ! is_null($data) ) { // options should not have data to write
 							$this->write( $ioFactory->toString( $data ) ); 
+						} else {
+							$this->buildHeaders();	
 						}
 						break;
 			default:		$this->write( $ioFactory->toString( $this->doGet($this->req,$this->resp) ) );
@@ -35,10 +36,6 @@ abstract class RestFrame {
 	}
 	private function write($data) {
 		$this->buildHeaders();
-/*		
-		foreach ( $this->resp->getHeaderNames() AS $name ) {
-			header($name.": ".implode(",",$this->resp->getHeader($name)));
-		}*/
 		if ( self::$compress == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
 			ob_start("ob_gzhandler");
 			echo $data;
