@@ -44,22 +44,23 @@ abstract class RestFrame {
 	
 	private function setHeaders() {
 		$headers = getallheaders();
-		// Firefox hack
-		foreach ($headers AS $k => $v ) {
-			if ( strtolower($k) == "origin" && $k != "Origin" ) {
-				$headers['Origin']=$v;
-			}
-		}
 		if ( ! empty(self::$corsOrigins) && $this->req->containsHeader('Origin') ){
 			if ( ! in_array($this->req->getHeader('Origin'),self::$corsOrigins) ) { 
 				throw new RestFrameCorsException($this->ioFactory,"CORS error",403); // if origin is not in list, throw 403
 			}
-			header("Access-Control-Allow-Origin: ".$headers['Origin']);
+			$this->resp->setHeader('Access-Control-Allow-Origin',$this->req->getHeader('Origin'));
+//			header("Access-Control-Allow-Origin: ".$headers['Origin']);
 			if ( ! empty(self::$corsMethods) ) {
-				header("Access-Control-Allow-Methods: ".implode(",",self::$corsMethods));
+				foreach (self::$corsMethods AS $value ) {
+					$this->req->addHeader('Access-Control-Allow-Methods',$value);
+				}
+//				header("Access-Control-Allow-Methods: ".implode(",",self::$corsMethods));
 			}
 			if ( ! empty(self::$corsHeaders) ) {
-				header("Access-Control-Allow-Headers: ".implode(",",self::$corsHeaders));
+				foreach (self::$corsHeaders AS $value ) {
+					$this->req->addHeader('Access-Control-Allow-Headers',$value);
+				}
+//				header("Access-Control-Allow-Headers: ".implode(",",self::$corsHeaders));
 			}
 		}		
 	}
