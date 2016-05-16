@@ -7,7 +7,7 @@ class HttpResponse {
     $this->headers[$name]=$value;
   }
   public function getHeaderNames(): array {
-    return array_keys($headers);
+    return array_keys($this->headers);
   }
   public function getHeader(string $name) {
     if ( isset($this->headers[$name]) ) {
