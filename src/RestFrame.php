@@ -66,7 +66,7 @@ abstract class RestFrame {
 				}
 			}
 			if ( ! empty(self::$corsExposeHeaders) ) {
-				foreach (self::$corsHeaders AS $value ) {
+				foreach (self::$corsExposeHeaders AS $value ) {
 					$this->resp->addHeader('Access-Control-Expose-Headers',$value);
 				}
 			}
