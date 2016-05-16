@@ -33,6 +33,7 @@ abstract class RestFrame {
 		foreach ( $this->resp->getHeaderNames() AS $name ) {
 			header($name.": ".implode(",",$this->resp->getHeader($name)));
 		}
+		http_response_code( $this->resp->getStatus() );
 	}
 	private function write($data) {
 		$this->buildHeaders();
