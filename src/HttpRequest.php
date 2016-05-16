@@ -12,10 +12,15 @@ class HttpRequest {
   }
   
   protected function getHeader(string $name) {
-    if ( isset($this->headers[$name]) ) {
-      return $this->headers[$name];
+    $lh = array_change_key_case($this->headers, CASE_LOWER);
+    if ( array_key_exists(strtolower($name),$lh) ) {
+      return $lh[strtolower($name)];
     }
     return null;
+  }
+  
+  protected function containsHeader(string $name): bool {
+    return array_key_exists(strtolower($name),array_change_key_case($this->headers, CASE_LOWER));
   }
   
   public static function getServerHttpRequest() {
