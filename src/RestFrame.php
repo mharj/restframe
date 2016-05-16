@@ -7,21 +7,24 @@ abstract class RestFrame {
 	private static $corsMethods = array();
 	private static $corsHeaders = array();
 	private static $compress = false;
+	private $req;
 	
 	private function __construct(IOFactory $ioFactory) {
 		$this->ioFactory = $ioFactory;
 		$this->setHeaders();
+		$this->req = new HttpRequest();
+		$this->resp = new HttpResponse();
 		header('Content-Type: '.$ioFactory->getContentType());
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
-			case "POST":		$this->write( $ioFactory->toString( $this->doPost() ) ); break;
-			case "PUT":		$this->write( $ioFactory->toString( $this->doPut() ) ); break;
-			case "DELETE":		$this->write( $ioFactory->toString( $this->doDelete() ) ); break;				
-			case "OPTIONS":		$data = $this->doOptions();
+			case "POST":		$this->write( $ioFactory->toString( $this->doPost($this->req,$this->resp) ) ); break;
+			case "PUT":		$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
+			case "DELETE":		$this->write( $ioFactory->toString( $this->doDelete($this->req,$this->resp) ) ); break;				
+			case "OPTIONS":		$data = $this->doOptions($this->req,$this->resp);
 						if ( ! is_null($data) ) { // options should not have data to write
 							$this->write( $ioFactory->toString( $data ) ); 
 						}
 						break;
-			default:		$this->write( $ioFactory->toString( $this->doGet() ) );
+			default:		$this->write( $ioFactory->toString( $this->doGet($this->req,$this->resp) ) );
 		}
 	}
 	
