@@ -29,6 +29,9 @@ abstract class RestFrame {
 	}
 	
 	private function write($data) {
+		foreach ( $this->resp->getHeaderNames() AS $name ) {
+			header($name.": ".$this->resp->getHeader($name));
+		}
 		if ( self::$compress == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
 			ob_start("ob_gzhandler");
 			echo $data;
