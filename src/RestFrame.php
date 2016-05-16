@@ -14,7 +14,7 @@ abstract class RestFrame {
 		$this->setHeaders();
 		$this->req = new HttpRequest();
 		$this->resp = new HttpResponse();
-		header('Content-Type: '.$ioFactory->getContentType());
+		$this->resp->setHeader('Content-Type',$ioFactory->getContentType());
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
 			case "POST":		$this->write( $ioFactory->toString( $this->doPost($this->req,$this->resp) ) ); break;
 			case "PUT":		$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
