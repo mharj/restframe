@@ -36,4 +36,7 @@ class HttpResponse {
   public function setStatus(int $status) {
     $this->status = $status;
   }
+  public function getStatus(): int {
+    return $this->status;
+  }
 }
