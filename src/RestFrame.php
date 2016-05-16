@@ -6,6 +6,7 @@ abstract class RestFrame {
 	private static $corsOrigins = array();
 	private static $corsMethods = array();
 	private static $corsHeaders = array();
+	private static $corsExposeHeaders = array();
 	private static $compress = false;
 	private $req;
 	
@@ -64,6 +65,11 @@ abstract class RestFrame {
 					$this->resp->addHeader('Access-Control-Allow-Headers',$value);
 				}
 			}
+			if ( ! empty(self::$corsExposeHeaders) ) {
+				foreach (self::$corsHeaders AS $value ) {
+					$this->resp->addHeader('Access-Control-Expose-Headers',$value);
+				}
+			}
 		}		
 	}
 	
@@ -99,7 +105,9 @@ abstract class RestFrame {
 	public static function setCorsHeaders(array $headers) {
 		self::$corsHeaders = $headers;
 	}	
-	
+	public static function setCorsExposeHeaders(array $headers) {
+		self::$corsExposeHeaders = $headers;
+	}	
 	public static function run(IOFactory $ioFactory) {
 		new static($ioFactory);
 	}
