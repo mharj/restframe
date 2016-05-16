@@ -53,18 +53,15 @@ abstract class RestFrame {
 				throw new RestFrameCorsException($this->ioFactory,"CORS error",403); // if origin is not in list, throw 403
 			}
 			$this->resp->setHeader('Access-Control-Allow-Origin',$this->req->getHeader('Origin'));
-//			header("Access-Control-Allow-Origin: ".$headers['Origin']);
 			if ( ! empty(self::$corsMethods) ) {
 				foreach (self::$corsMethods AS $value ) {
 					$this->resp->addHeader('Access-Control-Allow-Methods',$value);
 				}
-//				header("Access-Control-Allow-Methods: ".implode(",",self::$corsMethods));
 			}
 			if ( ! empty(self::$corsHeaders) ) {
 				foreach (self::$corsHeaders AS $value ) {
 					$this->resp->addHeader('Access-Control-Allow-Headers',$value);
 				}
-//				header("Access-Control-Allow-Headers: ".implode(",",self::$corsHeaders));
 			}
 		}		
 	}
