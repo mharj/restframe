@@ -29,7 +29,10 @@ class HttpRequest {
     }
     if( strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
       return new ApacheHttpRequest();
-    } 
+    }
+    if ( php_sapi_name() === 'cli' )  {
+      return new CliHttpRequest();
+    }
     return new CommonHttpRequest();
   }
 }
