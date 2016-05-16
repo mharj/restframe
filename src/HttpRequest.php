@@ -1,17 +1,17 @@
 <?php
 namespace mharj;
 
-abstract class HttpRequest {
+class HttpRequest {
   private $headers = array();
-  public function __construct() {
+  protected function __construct() {
     $this->headers = getallheaders();
   }
   
-  public function getHeaderNames(): array {
+  protected function getHeaderNames(): array {
     return array_keys($this->headers);
   }
   
-  public function getHeader(string $name) {
+  protected function getHeader(string $name) {
     if ( isset($this->headers[$name]) ) {
       return $this->headers[$name];
     }
