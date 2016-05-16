@@ -6,6 +6,9 @@ class HttpResponse {
   public function addHeader(string $name, string $value) {
     $this->headers[$name]=$value;
   }
+  public function setHeader(string $name, string $value) {
+    $this->headers[$name]=$value;
+  }  
   public function getHeaderNames(): array {
     return array_keys($this->headers);
   }
