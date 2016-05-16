@@ -12,7 +12,7 @@ abstract class RestFrame {
 	private function __construct(IOFactory $ioFactory) {
 		$this->ioFactory = $ioFactory;
 		$this->setHeaders();
-		$this->req = new HttpRequest();
+		$this->req = HttpRequest::getServerHttpRequest();
 		$this->resp = new HttpResponse();
 		$this->resp->setHeader('Content-Type',$ioFactory->getContentType());
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
