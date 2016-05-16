@@ -101,21 +101,21 @@ abstract class RestFrame {
 	/**
 	 * CRUD Read
 	 */
-	abstract function doGet();
+	abstract function doGet(HttpRequest $req,HttpResponse $resp);
 	/**
 	 * CRUD Create
 	 */
-	abstract function doPost();
+	abstract function doPost(HttpRequest $req,HttpResponse $resp);
 	/**
 	 * CRUD Update
 	 */
-	abstract function doPut();
+	abstract function doPut(HttpRequest $req,HttpResponse $resp);
 	/**
 	 * CRUD delete
 	 */
-	abstract function doDelete();
+	abstract function doDelete(HttpRequest $req,HttpResponse $resp);
 	/**
 	 * CRUD options (also CORS access-control pre-flight)
 	 */
-	abstract function doOptions();
+	abstract function doOptions(HttpRequest $req,HttpResponse $resp);
 }
