@@ -50,8 +50,8 @@ abstract class RestFrame {
 				$headers['Origin']=$v;
 			}
 		}
-		if ( ! empty(self::$corsOrigins) && isset($headers['Origin']) ){
-			if ( ! in_array($headers['Origin'],self::$corsOrigins) ) { 
+		if ( ! empty(self::$corsOrigins) && $this->req->contains('Origin') ){
+			if ( ! in_array($this->req->getHeader('Origin'),self::$corsOrigins) ) { 
 				throw new RestFrameCorsException($this->ioFactory,"CORS error",403); // if origin is not in list, throw 403
 			}
 			header("Access-Control-Allow-Origin: ".$headers['Origin']);
