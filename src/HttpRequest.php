@@ -27,11 +27,11 @@ class HttpRequest {
     if ( defined('HHVM_VERSION') ) {
       return new HhvmHttpRequest();
     }
-    if( strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
-      return new ApacheHttpRequest();
-    }
     if ( php_sapi_name() === 'cli' )  {
       return new CliHttpRequest();
+    }    
+    if( strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
+      return new ApacheHttpRequest();
     }
     return new CommonHttpRequest();
   }
