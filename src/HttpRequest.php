@@ -7,11 +7,11 @@ class HttpRequest {
     $this->headers = getallheaders();
   }
   
-  protected function getHeaderNames(): array {
+  public function getHeaderNames(): array {
     return array_keys($this->headers);
   }
   
-  protected function getHeader(string $name) {
+  public function getHeader(string $name) {
     $lh = array_change_key_case($this->headers, CASE_LOWER);
     if ( array_key_exists(strtolower($name),$lh) ) {
       return $lh[strtolower($name)];
@@ -19,7 +19,7 @@ class HttpRequest {
     return null;
   }
   
-  protected function containsHeader(string $name): bool {
+  public function containsHeader(string $name): bool {
     return array_key_exists(strtolower($name),array_change_key_case($this->headers, CASE_LOWER));
   }
   
