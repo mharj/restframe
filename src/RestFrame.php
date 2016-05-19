@@ -37,12 +37,13 @@ abstract class RestFrame {
 		http_response_code( $this->resp->getStatus() );
 	}
 	private function write($data) {
-		$this->buildHeaders();
 		if ( self::$compress == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
 			ob_start("ob_gzhandler");
+			$this->buildHeaders();
 			echo $data;
 			ob_flush();
 		} else {
+			$this->buildHeaders();
 			echo $data;
 		}
         }
