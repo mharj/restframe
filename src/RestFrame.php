@@ -19,7 +19,7 @@ abstract class RestFrame {
 		$this->setHeaders();
 	}
 	
-	private function run(IOFactory $ioFactory) {
+	private function runMethods(IOFactory $ioFactory) {
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
 			case "POST":		$this->write( $ioFactory->toString( $this->doPost($this->req,$this->resp) ) ); break;
 			case "PUT":		$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
@@ -115,7 +115,7 @@ abstract class RestFrame {
 	}	
 	public static function run(IOFactory $ioFactory) {
 		self::$instance = new static($ioFactory);
-		self::$instance->run($ioFactory);
+		self::$instance->runMethods($ioFactory);
 	}
 	public static function writeException(RestFrameException $ex) {
 		self::$instance->write($ex->getOutput());
