@@ -2,6 +2,7 @@
 namespace mharj;
 
 abstract class RestFrame {
+	private static $instance;
 	private $ioFactory;
 	private static $corsOrigins = array();
 	private static $corsMethods = array();
@@ -109,7 +110,10 @@ abstract class RestFrame {
 		self::$corsExposeHeaders = $headers;
 	}	
 	public static function run(IOFactory $ioFactory) {
-		new static($ioFactory);
+		self::$instance = new static($ioFactory);
+	}
+	public static function writeException(RestFrameException $ex) {
+		self::$instance->write($ex->getOutput());
 	}
 	
 	/**
