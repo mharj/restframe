@@ -17,6 +17,9 @@ abstract class RestFrame {
 		$this->resp->setHeader('Content-Type',$ioFactory->getContentType());
 		$this->ioFactory = $ioFactory;
 		$this->setHeaders();
+	}
+	
+	private function run(IOFactory $ioFactory) {
 		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
 			case "POST":		$this->write( $ioFactory->toString( $this->doPost($this->req,$this->resp) ) ); break;
 			case "PUT":		$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
@@ -31,6 +34,7 @@ abstract class RestFrame {
 			default:		$this->write( $ioFactory->toString( $this->doGet($this->req,$this->resp) ) );
 		}
 	}
+	
 	private function buildHeaders() {
 		foreach ( $this->resp->getHeaderNames() AS $name ) {
 			header($name.": ".implode(",",$this->resp->getHeader($name)));
@@ -111,6 +115,7 @@ abstract class RestFrame {
 	}	
 	public static function run(IOFactory $ioFactory) {
 		self::$instance = new static($ioFactory);
+		self::$instance->run($ioFactory);
 	}
 	public static function writeException(RestFrameException $ex) {
 		self::$instance->write($ex->getOutput());
