@@ -1,3 +1,3 @@
 <?php
 namespace mharj;
-class ApacheHttpRequest extends HttpRequest {}
+class ApacheHttpRequest extends CommonHttpRequest {}
