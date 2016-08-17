@@ -20,9 +20,9 @@ abstract class RestFrame {
 	}
 	
 	private function runMethods(IOFactory $ioFactory) {
-		switch ( filter_input(INPUT_SERVER,"REQUEST_METHOD") ) {
+		switch ( $this->req->getMethod() ) {
 			case "POST":		$this->write( $ioFactory->toString( $this->doPost($this->req,$this->resp) ) ); break;
-			case "PUT":		$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
+			case "PUT":			$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
 			case "DELETE":		$this->write( $ioFactory->toString( $this->doDelete($this->req,$this->resp) ) ); break;				
 			case "OPTIONS":		$data = $this->doOptions($this->req,$this->resp);
 						if ( ! is_null($data) ) { // options should not have data to write
@@ -37,10 +37,13 @@ abstract class RestFrame {
 	
 	private function buildHeaders() {
 		foreach ( $this->resp->getHeaderNames() AS $name ) {
-			header($name.": ".implode(",",$this->resp->getHeader($name)));
+			if ( ! $this->req instanceof CliHttpRequest )  {
+				header($name.": ".implode(",",$this->resp->getHeader($name)));
+			}
 		}
 		http_response_code( $this->resp->getStatus() );
 	}
+	
 	private function write($data) {
 		$this->buildHeaders();
 		if ( self::$compress == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
@@ -50,11 +53,9 @@ abstract class RestFrame {
 		} else {
 			echo $data;
 		}
-        }
+	}
 
-	
 	private function setHeaders() {
-		$headers = getallheaders();
 		if ( ! empty(self::$corsOrigins) && $this->req->containsHeader('Origin') ){
 			if ( ! in_array($this->req->getHeader('Origin'),self::$corsOrigins) ) { 
 				throw new RestFrameCorsException($this->ioFactory,"CORS error",403); // if origin is not in list, throw 403
