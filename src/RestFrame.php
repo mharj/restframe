@@ -8,7 +8,6 @@ abstract class RestFrame {
 	private static $corsMethods = array();
 	private static $corsHeaders = array();
 	private static $corsExposeHeaders = array();
-	private static $compress = false;
 	private $req;
 	
 	private function __construct(IOFactory $ioFactory) {
@@ -20,19 +19,23 @@ abstract class RestFrame {
 	}
 	
 	private function runMethods(IOFactory $ioFactory) {
+		$data = null;
 		switch ( $this->req->getMethod() ) {
-			case "POST":		$this->write( $ioFactory->toString( $this->doPost($this->req,$this->resp) ) ); break;
-			case "PUT":			$this->write( $ioFactory->toString( $this->doPut($this->req,$this->resp) ) ); break;
-			case "DELETE":		$this->write( $ioFactory->toString( $this->doDelete($this->req,$this->resp) ) ); break;				
-			case "OPTIONS":		$data = $this->doOptions($this->req,$this->resp);
-						if ( ! is_null($data) ) { // options should not have data to write
-							$this->write( $ioFactory->toString( $data ) ); 
-						} else {
-							$this->buildHeaders();	
-						}
-						break;
-			default:		$this->write( $ioFactory->toString( $this->doGet($this->req,$this->resp) ) );
+			case "POST":		$data = $this->doPost($this->req,$this->resp); break;
+			case "PUT":			$data = $this->doPut($this->req,$this->resp); break;
+			case "DELETE":		$data = $this->doDelete($this->req,$this->resp); break;				
+			case "OPTIONS":		$data = $this->doOptions($this->req,$this->resp); break;
+			default:			$data = $this->doGet($this->req,$this->resp); break;
 		}
+		$this->buildHeaders();
+		if ( $data != null ) {
+			$this->resp->setContent($data);
+			if ( $this->resp->isRaw() ) {
+				$this->write( $data );
+			} else {
+				$this->write( $ioFactory->toString( $data ) );
+			}
+		} 
 	}
 	
 	private function buildHeaders() {
@@ -45,8 +48,7 @@ abstract class RestFrame {
 	}
 	
 	private function write($data) {
-		$this->buildHeaders();
-		if ( self::$compress == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
+		if ( $this->resp->getCompression() == true && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
 			ob_start("ob_gzhandler");
 			echo $data;
 			ob_flush();
@@ -99,9 +101,6 @@ abstract class RestFrame {
 			}
 		}
 	}	
-	public static function setCompression($status=false) {
-		self::$compress = $status;
-	}
 	public static function setCorsOrigins(array $origins) {
 		self::$corsOrigins = $origins;
 	}
@@ -117,9 +116,13 @@ abstract class RestFrame {
 	public static function run(IOFactory $ioFactory) {
 		self::$instance = new static($ioFactory);
 		self::$instance->runMethods($ioFactory);
+		return self::$instance->getResponse();
 	}
 	public static function writeException(RestFrameException $ex) {
 		self::$instance->write($ex->getOutput());
+	}
+	public function getResponse() {
+		return $this->resp;
 	}
 	
 	/**

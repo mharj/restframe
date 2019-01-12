@@ -7,13 +7,13 @@ abstract class IOFactory {
 	/**
 	 * string to object conversion
 	 */
-	abstract function fromString($string);
+	abstract function fromString(string $string);
 	/**
 	 * object to string conversion
 	 */ 
-	abstract function toString($object);
+	abstract function toString($object): string;
 	/**
 	 * return IOFactory content type
 	 */
-	abstract function getContentType();
+	abstract function getContentType(): string;
 }
